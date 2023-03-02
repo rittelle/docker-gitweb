@@ -17,6 +17,9 @@ RUN make GITWEB_PROJECTROOT="/git" gitweb \
 # create an empty directory for the repositories
 RUN mkdir /git
 
+ENV DOCUMENT_ROOT=/var/www/cgi-bin/
+ENV SCRIPT_NAME=gitweb.cgi
+
 EXPOSE 4000/tcp
 
 CMD ["/usr/bin/fcgiwrap", "-s", "tcp:0.0.0.0:4000"]
