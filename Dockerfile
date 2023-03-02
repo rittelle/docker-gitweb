@@ -3,23 +3,34 @@ FROM alpine:3.17.0
 # "--no-cache" is new in Alpine 3.3 and it avoid using
 # "--update + rm -rf /var/cache/apk/*" (to remove cache)
 RUN apk add --no-cache \
-  fcgiwrap \
   git \
+  lighttpd \
   make \
   perl-cgi
+
+# copy the lighttpd configuration over
+COPY lighttpd /etc/lighttpd
 
 # install gitweb
 RUN git clone --depth 1 git://git.kernel.org/pub/scm/git/git.git /git-src
 WORKDIR /git-src
-RUN make GITWEB_PROJECTROOT="/git" gitweb \
-  && make gitwebdir=/var/www/cgi-bin install-gitweb
+RUN make \
+    prefix="/usr" \
+    gitwebdir=/var/www/cgi-bin \
+    GITWEB_PROJECTROOT="/git" \
+    install-gitweb
+
+# create a path for html files
+RUN mkdir /var/www/htdocs
+
+# create a test file
+RUN echo "Hello World!" >>/var/www/htdocs/index.html
 
 # create an empty directory for the repositories
 RUN mkdir /git
 
-ENV DOCUMENT_ROOT=/var/www/cgi-bin/
-ENV SCRIPT_NAME=gitweb.cgi
+WORKDIR /
 
-EXPOSE 4000/tcp
+EXPOSE 80/tcp
 
-CMD ["/usr/bin/fcgiwrap", "-s", "tcp:0.0.0.0:4000"]
+CMD ["/usr/sbin/lighttpd", "-D", "-f", "/etc/lighttpd/lighttpd.conf"]

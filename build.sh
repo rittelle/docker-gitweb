@@ -2,7 +2,7 @@
 
 # build and push the image
 
-NAME="rittelle/gitweb-fastcgi"
+NAME="rittelle/gitweb"
 VERSION="$(git rev-parse --verify HEAD)"
 ARCHITECTURES="linux/amd64,linux/arm64"
 
