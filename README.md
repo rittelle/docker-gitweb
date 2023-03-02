@@ -1,3 +1,3 @@
 # gitweb-fastcgi
 
-A Docker container that runs the gitweb fastcgi script on all projects in /git.  The fastcgi script listens on port 4000.
+A Docker container that runs the gitweb on lighttpd on port 80.  It serves gitweb for all repositories in /git.
